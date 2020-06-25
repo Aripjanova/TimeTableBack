@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -19,6 +20,7 @@ namespace  WebApplication.Models
 
         public async Task<Subject> FindOneSubject(int id_subject)
         {
+           
             using var cmd = Db.Connection.CreateCommand();
             cmd.CommandText = @"SELECT `id_subject`, `name` FROM `subject` WHERE `id_subject` = @id_subject";
             cmd.Parameters.Add(new MySqlParameter

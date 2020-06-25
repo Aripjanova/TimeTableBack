@@ -44,8 +44,10 @@ namespace WebApplication.Models
 
         public async Task UpdateSubject()
         {
+            Console.WriteLine("Aika"+id_subject);
             using var cmd = Db.Connection.CreateCommand();
             cmd.CommandText = @"UPDATE `subject` SET `name` = @name  WHERE `id_subject` = @id_subject;";
+            
             BindParams(cmd);
             BindId(cmd);
             await cmd.ExecuteNonQueryAsync();

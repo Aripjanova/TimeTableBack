@@ -9,8 +9,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Cors;
 namespace WebApplication.Controllers
 {
+    
   //  [ApiController]
-  [EnableCors("AllowAllOrigin")]
+  [EnableCors("MyPolicy")]
     [Route("api/group/")]
      public class ClassesController : ControllerBase
         {

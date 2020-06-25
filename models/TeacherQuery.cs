@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -18,6 +19,7 @@ namespace  WebApplication.Models
 
         public async Task<Teacher> FindOneTeacher(int id_teacher)
         {
+            Console.WriteLine("ppp"+id_teacher);
             using var cmd = Db.Connection.CreateCommand();
             cmd.CommandText = @"SELECT `id_teacher`, `first_name`, `last_name` FROM `teacher` WHERE `id_teacher` = @id_teacher";
             cmd.Parameters.Add(new MySqlParameter

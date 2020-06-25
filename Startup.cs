@@ -29,15 +29,21 @@ namespace WebApplication
         {
             services.AddControllers();
             
-            services.AddCors(options =>
+           /* services.AddCors(options =>
             {
                 options.AddPolicy("AllowAllOrigin", builder => builder.AllowAnyOrigin()
                     .WithMethods("DELETE")
                     .WithMethods("PUT")
                     .WithMethods("GET")
                     .WithMethods("POST")
-                );
-            });
+                );*/
+                services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                }));
+          //  });
             services.AddTransient<AppDb>(_ => new AppDb(Configuration["ConnectionStrings:DefaultConnection"]));        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

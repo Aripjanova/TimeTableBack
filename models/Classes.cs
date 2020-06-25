@@ -24,9 +24,14 @@ namespace WebApplication.Models
 
         public async Task InsertGroup()
         {
-            Console.WriteLine(id_class+name);
+            Console.WriteLine("hj"+id_class+name);
+            //using var cmd = Db.Connection.CreateCommand();
+            //cmd.CommandText = @"INSERT INTO `subject` (`name`) VALUES (@name);";
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"INSERT INTO `ClassStudents` (`name`, `id_class`) VALUES (@name ,@id_class);";
+            cmd.CommandText = @"INSERT INTO `ClassStudents` (`name`,`id_class`) VALUES (@name ,@id_class)";
+           
+            BindId(cmd);
+            BindParams(cmd);
             //cmd.CommandText = @"INSERT INTO `sheduler` (`day`, `hour`,`group`,`teacher`) VALUES (@day,@hour,@group ,@teacher);";
 
          //   INSERT INTO `timetable`.`ClassStudents` (`name`, `id_class`) VALUES ('5', '4');

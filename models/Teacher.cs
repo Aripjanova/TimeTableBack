@@ -32,16 +32,36 @@ namespace WebApplication.Models
          //   INSERT INTO `timetable`.`ClassStudents` (`name`, `id_class`) VALUES ('5', '4');
 
           //  @"INSERT INTO Tasks(Text,Created) VALUES (@Text,STR_TO_DATE(@Date, '%Y/%m/%d'));";            BindParams(cmd);
-            await cmd.ExecuteNonQueryAsync();
+         BindId(cmd);
+         BindParams(cmd);
+          await cmd.ExecuteNonQueryAsync();
             id_teacher = (int) cmd.LastInsertedId;
+        
         }
 
         public async Task UpdateTeacher()
         {
             using var cmd = Db.Connection.CreateCommand();
+            Console.WriteLine("fffd"+first_name+last_name);
             cmd.CommandText = @"UPDATE `teacher` SET `first_name` = @first_name , `last_name` = @last_name WHERE `id_teacher` = @id_teacher;";
-            BindParams(cmd);
-            BindId(cmd);
+            cmd.Parameters.Add(new MySqlParameter
+            {
+                ParameterName = "@id_teacher",
+                DbType = DbType.Int32,
+                Value = id_teacher,
+            });
+            cmd.Parameters.Add(new MySqlParameter
+            {
+                ParameterName = "@first_name",
+                DbType = DbType.String,
+                Value = first_name,
+            });
+            cmd.Parameters.Add(new MySqlParameter
+            {
+                ParameterName = "@last_name",
+                DbType = DbType.Int32,
+                Value = last_name,
+            });
             await cmd.ExecuteNonQueryAsync();
         }
 

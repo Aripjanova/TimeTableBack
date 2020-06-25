@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace WebApplication.Controllers
 {
-    [EnableCors("AllowAllOrigin")]
+    [EnableCors("MyPolicy")]
   //  [ApiController]
     [Route("api/subject/")]
      public class SubjectController : ControllerBase
@@ -63,6 +63,7 @@ namespace WebApplication.Controllers
             [HttpPut("{id_subject}")]
             public async Task<IActionResult> PutOne(int id_subject, [FromBody] Subject body)
             {
+                Console.WriteLine(id_subject);
                 await Db.Connection.OpenAsync();
                 var query = new SubjectQuery(Db);
                 var result = await query.FindOneSubject(id_subject);
@@ -70,6 +71,7 @@ namespace WebApplication.Controllers
                     return new NotFoundResult();
                 result.id_subject = body.id_subject;
                 result.name = body.name;
+                Console.WriteLine(result.id_subject);
                 await result.UpdateSubject();
                 return new OkObjectResult(result);
             }
