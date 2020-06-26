@@ -18,6 +18,65 @@ namespace  WebApplication
     {
         public static void Main(string[] args)
         {
+            MySqlConnection conDatabase = new MySqlConnection("Server=localhost;Database=timetable;Uid=root;Pwd=aika9709;");
+            string cmd_cnt;
+            conDatabase.Open();
+            //   cmd_cnt = "select first_name from teacher";
+            cmd_cnt = "SELECT `id_block`,`id_teacher`, `id_subject`, `id_typeBlock`,`id_groups`,`countBlock` FROM `Blok` ";
+
+            string strName;
+
+         /*   MySqlCommand db_cmd = new MySqlCommand(cmd_cnt, conDatabase);
+            MySqlDataReader dbread = db_cmd.ExecuteReader();
+
+            if (dbread.Read())
+            {
+                strName= dbread[0].ToString();
+                Console.WriteLine("AIKAAIKA {0} ",strName.ToString());
+                
+            }*/
+         var list = new List<Lessоn>();
+         //for (int i = 0; i < groups.Length; i++)
+      //       list.Add(new Lessоn(groups[i], teachers[i]));
+            Block [] allRecords = null;
+            var listt = new List<Block>();
+           using (var command = new MySqlCommand(cmd_cnt, conDatabase))
+            {
+               
+                using (var reader = command.ExecuteReader())
+                {
+                    
+                    while (reader.Read())
+                    {
+                        listt.Add(new Block
+                        {
+                            id_block = reader.GetInt32(0), id_teacher = reader.GetInt32(1),
+                            id_subject = reader.GetInt32(2), id_typeBlock = reader.GetInt32(3),
+                            id_groups = reader.GetInt32(4), countBlock = reader.GetInt32(5)
+                        });
+                        var length = reader.GetInt32(5);
+                        for (int i = 0; i < length; i++)
+                        {
+                            string teachAndSubject = reader.GetInt32(1).ToString() + reader.GetInt32(2).ToString();
+                            Console.WriteLine("teachAndSubject{0}",Int32.Parse(teachAndSubject));
+                            list.Add(new Lessоn(reader.GetInt32(4),Int32.Parse(teachAndSubject)));
+                            Console.WriteLine("id_groups {0},id_teacher{1},{2}",reader.GetInt32(4),reader.GetInt32(1),reader.GetInt32(2));
+                        }
+                        //strName= reader[1].ToString();
+                        /*Console.WriteLine("id_block {0}, id_teacher {1},id_subject {2} , id_typeBlock {3}, id_group {4}, countBlock {5} ",
+                            reader.GetInt32(0),reader.GetInt32(1),reader.GetInt32(2),reader.GetInt32(3),
+                        reader.GetInt32(4),reader.GetInt32(5));*/
+                    }
+
+                    allRecords = listt.ToArray();
+                    Console.WriteLine("AIKAAIKA {0} ",list.ToArray());
+                }
+            }
+                
+            conDatabase.Close();
+          
+
+
 
 
 
@@ -48,9 +107,9 @@ namespace  WebApplication
                 12, 26, 8, 29, 3, 24, 19, 15, 20, 1616, 29, 1, 10, 8, 12
             };
 
-            var list = new List<Lessоn>();
+        /*    var list = new List<Lessоn>();
             for (int i = 0; i < groups.Length; i++)
-                list.Add(new Lessоn(groups[i], teachers[i]));
+                list.Add(new Lessоn(groups[i], teachers[i]));*/
 
             var solver = new Solver(); 
 
@@ -72,7 +131,27 @@ namespace  WebApplication
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
 
-        
+        public class Block
+        {
+            public int id_block { get; set; }
+            public int id_teacher { get; set; }
+            public int id_subject { get; set; }
+            public int id_typeBlock { get; set; }
+            public int id_groups { get; set; }
+            public int countBlock { get; set; }
+            
+        }
+        public class Blocks
+        {
+            public int id_block;
+            public int id_teacher;
+            public int id_subject;
+            public int id_typeBlock;
+            public int id_groups;
+            public int countBlock;
+
+    
+        }
         static class FitnessFunctions
         {
             public static int GroupWindowPenalty = 10; 
@@ -336,10 +415,45 @@ namespace  WebApplication
             }
 
             public override string ToString()
-            { 
+            { var sb = new StringBuilder();
+                int[] id_t = new int[1000];
+                int[] id_g = new int[1000];
+                int[] id_tg = new int[1000];
+                MySqlConnection conDatabases = new MySqlConnection("Server=localhost;Database=timetable;Uid=root;Pwd=aika9709;");
+                string cmd_cntt;
+                conDatabases.Open();
+                cmd_cntt = "SELECT `id_block`,`id_teacher`, `id_subject`, `id_typeBlock`,`id_groups`,`countBlock` FROM `Blok` ";
+                using (var command = new MySqlCommand(cmd_cntt, conDatabases))
+                {
+               
+                    using (var reader = command.ExecuteReader())
+                    {
+                        var a = 0;   
+                        while (reader.Read())
+                        {
+                            
+                            string teachAndSubject = reader.GetInt32(1).ToString() + reader.GetInt32(2).ToString();
+                            Console.WriteLine("teachAndSubject{0}",Int32.Parse(teachAndSubject));
+                            id_t[a] = reader.GetInt32(1);
+                            id_g[a] = reader.GetInt32(2);
+                            id_tg[a] = Int32.Parse(teachAndSubject);
+                         //   Console.WriteLine("AAAAAAAAAAAA{0},nnnnn{1},nnnnnn{2}", id_tg[a],  id_t[a],id_g[a]  );
+                            //strName= reader[1].ToString();
+                            Console.WriteLine("id_block {0}, id_teacher {1},id_subject {2} , id_typeBlock {3}, id_group {4}, countBlock {5} ",
+                                reader.GetInt32(0),reader.GetInt32(1),reader.GetInt32(2),reader.GetInt32(3),
+                            reader.GetInt32(4),reader.GetInt32(5));
+                            a++;
+                        }
+                        
+                    }
+                }
+                
+                conDatabases.Close();
+
                 int[,] Group = new int[1000,1000];
                 int[,] Teah = new int[1000,1000];
-                var sb = new StringBuilder();
+                
+                
               
                 for (byte day = 0; day < Plan.DaysPerWeek; day++)
                 {
@@ -351,18 +465,35 @@ namespace  WebApplication
                         sb.AppendFormat("Hour {0}: ", hour);
                         foreach (var p in HourPlans[day, hour].GroupToTeacher)
                         {
+                            
                             MySqlConnection conDatabase = new MySqlConnection("Server=localhost;Database=timetable;Uid=root;Pwd=aika9709;");
                             string cmd_cnt;
 
                             conDatabase.Open();
+                            var pValue = p.Value;
+                            for (int i = 0; i < id_tg.Length; i++)
+                            {
+                               
+                                if (id_tg[i]==p.Value)
+                                {
+                                    Console.WriteLine("pValue:"+pValue);
+                                    Console.WriteLine("id_tg["+i+"]:"+id_tg[i]);
+                                    Console.WriteLine("id_t["+i+"]:"+id_t[i]);
+                                    pValue = id_t[i];
+                                    Console.WriteLine("pValue:"+pValue);
+                                }
+                                
+                            }
                             //   cmd_cnt = "select first_name from teacher";
-                            cmd_cnt = " INSERT INTO `schedule` (`day`, `hour`,`group`,`teacher`) VALUES ("+day+","+hour+","+p.Key+","+p.Value+")";
-                
+                            cmd_cnt = " INSERT INTO `schedule` (`day`, `hour`,`group`,`teacher`) VALUES ("+day+","+hour+","+p.Key+","+pValue+")";
+                     //   cmd_cnt = " DELETE FROM `schedule` ";
+
                             string strName;
 
                             MySqlCommand db_cmd = new MySqlCommand(cmd_cnt, conDatabase);
                             MySqlDataReader dbread = db_cmd.ExecuteReader();
-
+                           
+    
                             if (dbread.Read())
                             {
                                 strName= dbread[0].ToString();
@@ -372,13 +503,11 @@ namespace  WebApplication
                 
                             conDatabase.Close();
                          var a = new GetData(day,hour,p.Key,p.Value);
-                         //   a.AddBlock(day, hour, p.Key, p.Value);
+                            // a.AddBlock(day, hour, p.Key, p.Value);
                             Group[day, hour] = p.Key;
                                 Teah[day, hour] = p.Value;
                                 if(p.Value==15)
                                 sb.AppendFormat("Tch: {0}-{1} ", Group[day, hour],  Teah[day, hour]);
-                                
-                            
                         }
                       
                         sb.AppendLine();
