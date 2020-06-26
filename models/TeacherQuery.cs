@@ -35,7 +35,7 @@ namespace  WebApplication.Models
         public async Task<List<Teacher>> LatestPostsTeacher()
         {
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"SELECT `id_teacher`, `first_name`, `last_name` FROM `teacher` ORDER BY `id_teacher` ASC ";
+            cmd.CommandText = @"SELECT `id_teacher`, `first_name`, `last_name` FROM `teacher` ORDER BY `first_name` ASC ";
             return await ReadAllAsync(await cmd.ExecuteReaderAsync());
         }
 

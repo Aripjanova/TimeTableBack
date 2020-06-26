@@ -26,18 +26,18 @@ namespace WebApplication.Controllers
             public async Task<IActionResult> GetLatest()
             {
                 await Db.Connection.OpenAsync();
-                var query = new BlockQuery(Db);
+                var query = new Blokquery(Db);
                 var result = await query.LatestPostsBlock();
                 return new OkObjectResult(result);
             }
 
             // GET api/block/1
-            [HttpGet("{id_groups}")]
-            public async Task<IActionResult> GetOne(int id_blocks)
+            [HttpGet("{id_block}")]
+            public async Task<IActionResult> GetOne(int id_block)
             {
                 await Db.Connection.OpenAsync();
-                var query = new BlockQuery(Db);
-                var result = await query.FindOneBlock(id_blocks);
+                var query = new BlockOne(Db);
+                var result = await query.FindOneBlock(id_block);
                 if (result is null)
                     return new NotFoundResult();
                 return new OkObjectResult(result);
@@ -45,9 +45,9 @@ namespace WebApplication.Controllers
 
             // POST api/block
             [HttpPost]
-            [Route("/post")]
-            public async Task<IActionResult> Post([FromBody] Block body)
-            {
+       //     [Route("")]
+            public async Task<IActionResult> Post([FromHeader] Block body)
+            {   Console.WriteLine("block id_block"+body.id_block);
                 await Db.Connection.OpenAsync();
                 body.Db = Db;
                 await body.InsertBlock();
@@ -56,11 +56,11 @@ namespace WebApplication.Controllers
             }
 
             // PUT api/block/5
-            [HttpPut("{id}")]
+            [HttpPut("{id_block}")]
             public async Task<IActionResult> PutOne(int id_block, [FromBody] Block body)
             {
                 await Db.Connection.OpenAsync();
-                var query = new BlockQuery(Db);
+                var query = new Blokquery(Db);
                 var result = await query.FindOneBlock(id_block);
                 if (result is null)
                     return new NotFoundResult();
@@ -74,12 +74,14 @@ namespace WebApplication.Controllers
             }
 
             // DELETE api/block/5
-            [HttpDelete("{id}")]
-            public async Task<IActionResult> DeleteOne(int id)
+            [HttpDelete("{id_block}")]
+            
+            public async Task<IActionResult> DeleteOne(int id_block)
             {
+                Console.WriteLine("id_block"+id_block);
                 await Db.Connection.OpenAsync();
-                var query = new BlockQuery(Db);
-                var result = await query.FindOneBlock(id);
+                var query = new BlockOne(Db);
+                var result = await query.FindOneBlock(id_block);
                 if (result is null)
                     return new NotFoundResult();
                 await result.DeleteBlock();
@@ -91,8 +93,8 @@ namespace WebApplication.Controllers
             public async Task<IActionResult> DeleteAll()
             {
                 await Db.Connection.OpenAsync();
-                var query = new BlockQuery(Db);
-                await query.DeleteAllBlocks();
+                var query = new BlockOne(Db);
+                await query.DeleteAllBlock();
                 return new OkResult();
             }
 
